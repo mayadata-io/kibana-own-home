@@ -1,17 +1,16 @@
-import initProxy from './server/proxy/init_proxy';
-import selectionRoute from './server/selection';
+import initProxy from "./server/proxy/init_proxy";
+import selectionRoute from "./server/selection";
 
-export default function (kibana) {
-
+export default function(kibana) {
   return new kibana.Plugin({
-    require: ['elasticsearch'],
+    require: ["elasticsearch"],
 
     uiExports: {
       app: {
-        title: 'Own Home',
-        description: 'Add multi-tenancy feature to Kibana',
-        main: 'plugins/own_home/app',
-        icon: 'plugins/own_home/icon.svg'
+        title: "Own Home",
+        description: "Add multi-tenancy feature to Kibana",
+        main: "plugins/own_home/app",
+        icon: "plugins/own_home/icon.svg"
       }
     },
 
@@ -21,10 +20,10 @@ export default function (kibana) {
       return object({
         enabled: boolean().default(true),
         remote_user: string(),
-        proxy_user_header: string().default('x-proxy-user'),
+        proxy_user_header: string().default("x-proxy-user"),
         get_username_from_session: object({
           enabled: boolean().default(false),
-          key: string().default('username')
+          key: string().default("username")
         }).default(),
         default_kibana_index_suffix: string(),
         ssl: object({
@@ -32,33 +31,45 @@ export default function (kibana) {
           key: string()
         }).default(),
         elasticsearch: object({
-          url: string().default('http://localhost:9200'),
+          url: string().default("http://localhost:9200"),
           ssl: object({
-            certificateAuthorities: array().single().items(string())
+            certificateAuthorities: array()
+              .single()
+              .items(string())
           }).default()
         }).default(),
         session: object({
-          secretkey: string().default('the-password-must-be-at-least-32-characters-long'),
+          secretkey: string().default(
+            "the-password-must-be-at-least-32-characters-long"
+          ),
           isSecure: boolean().default(true),
           timeout: number().default(3600000),
           cookie: object({
-            ttl: number().integer().min(0).default(60 * 60 * 1000)
+            ttl: number()
+              .integer()
+              .min(0)
+              .default(60 * 60 * 1000)
           }).default()
         }).default(),
         local: object({
           enabled: boolean().default(true),
-          groups: array().items().single().default(['public', 'sandbox'])
+          groups: array()
+            .items()
+            .single()
+            .default()
         }).default(),
         ldap: object({
           enabled: Joi.boolean().default(false),
-          url: string().default('ldap://localhost:389'),
-          userbase: string().default('ou=People,dc=localhost'),
-          rolebase: string().default('ou=Groups,dc=localhost'),
-          search_filter: string().default('(cn=*)'),
-          username_attribute: string().default('cn'),
-          rolename_attribute: string().default('cn'),
+          url: string().default("ldap://localhost:389"),
+          userbase: string().default("ou=People,dc=localhost"),
+          rolebase: string().default("ou=Groups,dc=localhost"),
+          search_filter: string().default("(cn=*)"),
+          username_attribute: string().default("cn"),
+          rolename_attribute: string().default("cn"),
           adfs: boolean().default(false),
-          member_attribute: string().valid('member', 'memberUid', 'uniquemember').default('member'),
+          member_attribute: string()
+            .valid("member", "memberUid", "uniquemember")
+            .default("member"),
           get_dn_dynamically: boolean().default(false),
           bind: object({
             dn: string(),
@@ -68,7 +79,7 @@ export default function (kibana) {
         explicit_kibana_index_url: object({
           enabled: Joi.boolean().default(false),
           proxy: object({
-            url: string().default('http://localhost:15601'),
+            url: string().default("http://localhost:15601"),
             ssl: object({
               certificate: string(),
               key: string()
@@ -87,10 +98,10 @@ export default function (kibana) {
     },
 
     init(server, options) {
-      if (server.config().get('own_home.enabled')) {
+      if (server.config().get("own_home.enabled")) {
         initProxy(server);
         selectionRoute(server);
       }
     }
   });
-};
+}
