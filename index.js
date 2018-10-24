@@ -10,7 +10,8 @@ export default function(kibana) {
         title: "Own Home",
         description: "Add multi-tenancy feature to Kibana",
         main: "plugins/own_home/app",
-        icon: "plugins/own_home/icon.svg"
+        icon: "plugins/own_home/icon.svg",
+        hidden: true
       }
     },
 
